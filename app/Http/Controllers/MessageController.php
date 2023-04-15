@@ -3,83 +3,90 @@
 namespace App\Http\Controllers;
 
 use App\Models\Message;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class MessageController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function send_message(Request $request)
     {
-        //
+        $fields = Validator::make($request->all(), [
+            'sender' => ['required', 'string'],
+            'receiver' => ['required', 'string'],
+            'message' => ['required', 'string'],
+        ]);
+
+        if ($fields->fails()) {
+            return [
+                'error' => 'Bad credentials',
+                'status' => 401
+            ];
+        }
+
+        $message = Message::create([
+            "sender" => $request->senrder,
+            "receiver" => $request->receiver,
+            'message' => $request->message,
+        ]);
+        $successMessage = $message->save();
+
+        if ($successMessage) {
+            // trigger pusher notification
+
+            return [
+                "message" => "Successfully registered",
+                "status" => 201
+            ];
+        }
+        return [
+            'error' => 'Bad credentials',
+            'status' => 401
+        ];
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function get_conversation(Request $request)
     {
-        //
+        if ($request->to > $request->from) {
+            $conversation_id = $request->to . $request->from;
+        } else {
+            $conversation_id = $request->from . $request->to;
+        }
+
+        $messages = Message::where('conversation_id', $conversation_id)->get();
+
+        $structMessage = array();
+        foreach ($messages as $key => $message) {
+            array_push($structMessage, [
+                'message' => $messages[$key]->message,
+                'time' => Carbon::createFromTimeStamp(strtotime($messages[$key]->created_at))->diffForHumans(),
+                'userid' => $messages[$key]->from,
+            ]);
+        }
+
+        return ['status' => 'success', 'data' => $structMessage];
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function get_chats(Request $request, $userId)
     {
-        //
-    }
+        $messageFrom = Message::where('sender', $request->sender)->orwhere('receiver', $request->sender)->orderBy('created_at', 'desc')->get()->unique('conversation_id');
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Message  $message
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Message $message)
-    {
-        //
-    }
+        $messageInbox = array();
+        foreach ($messageFrom as $key => $message) {
+            if ($request->from !== $message->from) {
+                $user = User::find($message->from);
+                $messageFrom[$key]['user'] = $user;
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Message  $message
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Message $message)
-    {
-        //
-    }
+                array_push($messageInbox, $message);
+            } else if ($request->from !== $message->to) {
+                $user = User::find($message->to);
+                $messageFrom[$key]['user'] = $user;
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Message  $message
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Message $message)
-    {
-        //
-    }
+                array_push($messageInbox, $message);
+            }
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Message  $message
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Message $message)
-    {
-        //
+        return ['status' => 'success', 'data' => $messageInbox];
     }
 }

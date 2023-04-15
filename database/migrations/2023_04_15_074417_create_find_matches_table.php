@@ -13,15 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('find_matches', function (Blueprint $table) {
             $table->id();
-            $table->string("username");
-            $table->string("firstname");
-            $table->string("lastname");
-            $table->string("bio");
-            $table->string("profile");
-            $table->boolean("ishidden");
-            $table->timestamp("date_verified");
             $table->timestamps();
         });
     }
@@ -33,6 +26,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('find_matches');
     }
 };
