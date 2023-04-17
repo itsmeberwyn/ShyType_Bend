@@ -18,4 +18,8 @@ class User extends Model
         "date_verified",
         "password"
     ];
+
+    public function Personality(){
+        return $this->hasOne(Personality::class);
+    }
 }
