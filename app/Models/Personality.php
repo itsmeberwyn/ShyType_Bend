@@ -22,4 +22,9 @@ class Personality extends Model
         "question9",
         "question10",
     ];
+
+    public function post()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
