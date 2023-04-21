@@ -18,8 +18,13 @@ return new class extends Migration
             $table->string("username");
             $table->string("firstname");
             $table->string("lastname");
+            $table->string("email");
             $table->string("bio");
+            $table->string("age");
+            $table->string("gender");
+            $table->string("matchgender");
             $table->string("profile");
+            $table->string("password");
             $table->boolean("ishidden");
             $table->timestamp("date_verified");
             $table->timestamps();

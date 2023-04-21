@@ -13,9 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string("gender")->after('profile');
-            $table->string("password");
+        Schema::create('matches', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('userId');
+            $table->string('response');
+            $table->timestamps();
+            $table->foreign('userId')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -26,8 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('matches');
     }
 };

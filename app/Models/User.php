@@ -13,9 +13,14 @@ class User extends Model
         "username",
         "firstname",
         "lastname",
+        "email",
         "bio",
+        "age",
+        "gender",
+        "matchgender",
         "profile",
+        "password",
+        "ishidden",
         "date_verified",
-        "password"
     ];
 }

@@ -36,4 +36,9 @@ class FindMatchController extends Controller
 
         dd($matches);
     }
+
+    public function recent_match(Request $request)
+    {
+        // check if the two user matches by checking their recent matches
+    }
 }
