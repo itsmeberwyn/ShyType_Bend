@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string("lastname");
             $table->string("email");
             $table->string("bio");
+            $table->string("contact");
             $table->string("age");
             $table->string("gender");
             $table->string("matchgender");

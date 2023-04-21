@@ -91,8 +91,8 @@ class UserController extends Controller
 
     public function login(Request $request)
     {
-        $fields = Validator::make($request->all(), [
-            'username' => ['required', 'string'],
+        $fields = Validator::make($request->credentials, [
+            'email' => ['required', 'string'],
             'password' => ['required', 'string']
         ]);
 
@@ -103,7 +103,7 @@ class UserController extends Controller
             ];
         }
 
-        $user = User::where('username',  $request->username)->first();
+        $user = User::where('email',  $request->credentials['email'])->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return [
@@ -114,19 +114,17 @@ class UserController extends Controller
 
         return [
             "message" => "Successfully logged in",
-            "status" => 200
+            "data" => $user,
+            "status" => 200,
         ];
     }
 
     public function profile(Request $request)
     {
-        $fields = Validator::make($request->all(), [
-            'username' => ['required', 'string', 'unique:users'],
-            'firstname' => ['required', 'string'],
-            'lastname' => ['required', 'string'],
+        $fields = Validator::make($request->user, [
+            'username' => ['required', 'string'],
             'bio' => ['required', 'string'],
-            'profile' => ['required', 'string'],
-            'password' => ['required', 'string'],
+            'contact' => ['required', 'string'],
         ]);
 
         if ($fields->fails()) {
@@ -136,12 +134,24 @@ class UserController extends Controller
             ];
         }
 
-        $user = User::find($request->id);
-        $user->username = $request->username;
-        $user->firstname = $request->firstname;
-        $user->lastname = $request->lastname;
-        $user->bio = $request->bio;
-        $user->profile = $request->profile;
+        if ($request->npassword !== null) {
+            $password = $request->user['npassword'];
+        } else {
+            $password = $request->user['password'];
+        }
+
+        $user = User::find($request->user['id']);
+        $user->username = $request->user['username'];
+        $user->bio = $request->user['bio'];
+        $user->contact = $request->user['contact'];
+        $user->profile = $request->user['profile'] || "";
+        $user->password = Hash::make($password);
         $user->save();
+
+        return [
+            "message" => "Successfully updated data",
+            "data" => $user,
+            "status" => 200,
+        ];
     }
 }
