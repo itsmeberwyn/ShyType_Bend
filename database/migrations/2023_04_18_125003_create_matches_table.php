@@ -16,9 +16,11 @@ return new class extends Migration
         Schema::create('matches', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('userId');
+            $table->unsignedBigInteger('matchUser');
             $table->string('response');
             $table->timestamps();
             $table->foreign('userId')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('matchUser')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

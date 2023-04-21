@@ -11,6 +11,7 @@ class Matches extends Model
 
     protected $fillable = [
         "userId",
+        "matchUser",
         "response",
     ];
 }

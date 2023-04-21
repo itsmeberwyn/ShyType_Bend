@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\FindMatchController;
+use App\Http\Controllers\MatchesController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -25,6 +26,7 @@ Route::put('/auth/user/profile', [UserController::class, 'profile']);
 Route::post('/auth/admin/register', [AdminController::class, 'register']);
 Route::post('/auth/admin/login', [AdminController::class, 'login']);
 
+Route::post('/user/match', [MatchesController::class, 'save_match_response']);
 Route::get('/user/match', [FindMatchController::class, 'find_match']);
 
 Route::post('/user/message', [MessageController::class, 'send_message']);
