@@ -55,10 +55,10 @@ class MessageController extends Controller
 
     public function get_conversation(Request $request)
     {
-        if ($request->to > $request->from) {
-            $conversation_id = $request->to . $request->from;
+        if ($request->receiver > $request->sender) {
+            $conversation_id = $request->receiver . $request->sender;
         } else {
-            $conversation_id = $request->from . $request->to;
+            $conversation_id = $request->sender . $request->receiver;
         }
 
         $messages = Message::where('conversation_id', $conversation_id)->get();
@@ -68,7 +68,7 @@ class MessageController extends Controller
             array_push($structMessage, [
                 'message' => $messages[$key]->message,
                 'time' => Carbon::createFromTimeStamp(strtotime($messages[$key]->created_at))->diffForHumans(),
-                'userid' => $messages[$key]->from,
+                'userid' => $messages[$key]->sender,
             ]);
         }
 
@@ -78,15 +78,17 @@ class MessageController extends Controller
     public function get_chats(Request $request)
     {
         $messageFrom = Message::where('sender', $request->sender)->orwhere('receiver', $request->sender)->orderBy('created_at', 'desc')->get()->unique('conversation_id');
+
         $messageInbox = array();
         foreach ($messageFrom as $key => $message) {
             if ($request->sender !== $message->sender) {
-                $user = User::find($message->sender);
+                // array_push($arr, $message);
+                $user = User::find($message->receiver);
                 $messageFrom[$key]['user'] = $user;
 
                 array_push($messageInbox, $message);
             } else if ($request->sender !== $message->receiver) {
-                $user = User::find($message->receiver);
+                $user = User::find($message->sender);
                 $messageFrom[$key]['user'] = $user;
 
                 array_push($messageInbox, $message);
