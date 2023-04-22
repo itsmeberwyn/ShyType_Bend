@@ -13,8 +13,8 @@ class MessageController extends Controller
     public function send_message(Request $request)
     {
         $fields = Validator::make($request->all(), [
-            'sender' => ['required', 'string'],
-            'receiver' => ['required', 'string'],
+            'sender' => ['required', 'integer'],
+            'receiver' => ['required', 'integer'],
             'message' => ['required', 'string'],
         ]);
 
@@ -25,11 +25,18 @@ class MessageController extends Controller
             ];
         }
 
-        $message = Message::create([
-            "sender" => $request->senrder,
-            "receiver" => $request->receiver,
-            'message' => $request->message,
-        ]);
+        $message = new Message;
+
+        $message->sender = $request->sender;
+        $message->receiver = $request->receiver;
+        $message->message = $request->message;
+
+        if ($request->receiver > $request->sender) {
+            $message->conversation_id = $request->receiver . $request->sender;
+        } else {
+            $message->conversation_id = $request->sender . $request->receiver;
+        }
+
         $successMessage = $message->save();
 
         if ($successMessage) {
@@ -68,19 +75,18 @@ class MessageController extends Controller
         return ['status' => 'success', 'data' => $structMessage];
     }
 
-    public function get_chats(Request $request, $userId)
+    public function get_chats(Request $request)
     {
         $messageFrom = Message::where('sender', $request->sender)->orwhere('receiver', $request->sender)->orderBy('created_at', 'desc')->get()->unique('conversation_id');
-
         $messageInbox = array();
         foreach ($messageFrom as $key => $message) {
-            if ($request->from !== $message->from) {
-                $user = User::find($message->from);
+            if ($request->sender !== $message->sender) {
+                $user = User::find($message->sender);
                 $messageFrom[$key]['user'] = $user;
 
                 array_push($messageInbox, $message);
-            } else if ($request->from !== $message->to) {
-                $user = User::find($message->to);
+            } else if ($request->sender !== $message->receiver) {
+                $user = User::find($message->receiver);
                 $messageFrom[$key]['user'] = $user;
 
                 array_push($messageInbox, $message);
