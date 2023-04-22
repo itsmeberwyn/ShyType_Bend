@@ -62,6 +62,7 @@ class MessageController extends Controller
         }
 
         $messages = Message::where('conversation_id', $conversation_id)->get();
+        $user = User::where('id', $request->owner)->get();
 
         $structMessage = array();
         foreach ($messages as $key => $message) {
@@ -72,7 +73,7 @@ class MessageController extends Controller
             ]);
         }
 
-        return ['status' => 'success', 'data' => $structMessage];
+        return ['status' => 'success', 'data' => $structMessage, 'user' => $user];
     }
 
     public function get_chats(Request $request)
@@ -81,14 +82,13 @@ class MessageController extends Controller
 
         $messageInbox = array();
         foreach ($messageFrom as $key => $message) {
-            if ($request->sender !== $message->sender) {
-                // array_push($arr, $message);
-                $user = User::find($message->receiver);
+            if ($request->sender != $message->sender) {
+                $user = User::find($message->sender);
                 $messageFrom[$key]['user'] = $user;
 
                 array_push($messageInbox, $message);
-            } else if ($request->sender !== $message->receiver) {
-                $user = User::find($message->sender);
+            } else if ($request->sender != $message->receiver) {
+                $user = User::find($message->receiver);
                 $messageFrom[$key]['user'] = $user;
 
                 array_push($messageInbox, $message);
