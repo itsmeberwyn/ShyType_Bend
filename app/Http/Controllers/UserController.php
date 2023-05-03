@@ -14,6 +14,14 @@ class UserController extends Controller
 
     public function register(Request $request)
     {
+        $image = base64_decode($request->profile_image['base64String']); // image base64 encoded
+        $compPic =  '_image' . time() . '.' . $request->profile_image['format'];
+
+        Storage::disk('public')->put($compPic, $image);
+
+        $image = Image::make(public_path("storage/posts/{$compPic}"))->fit(1200, 1200);
+        $image->save();
+
         $fieldsuser = Validator::make($request->userBio, [
             'username' => ['required', 'string', 'unique:users'],
             'firstname' => ['required', 'string'],
@@ -53,7 +61,7 @@ class UserController extends Controller
             "bio" => '',
             "gender" => $request->userBio['gender'],
             "matchgender" => $request->userBio['matchgender'],
-            "profile" => '',
+            "profile" => $compPic,
             "ishidden" => 0,
             "date_verified" => Carbon::now()->toDateTimeString(),
             'password' => Hash::make($request->password),
@@ -68,7 +76,7 @@ class UserController extends Controller
             "question3" => $request->personality['question3'] === 'true' ? 1 : 0,
             "question4" => $request->personality['question4'] === 'true' ? 1 : 0,
             "question5" => $request->personality['question5'] === 'true' ? 1 : 0,
-            "question6" => $request->personality['question6'] === 'true' ? 1 : 0,
+            "question6" => $request->personality['question6'] === 'true' ? 1 : 0, 
             "question7" => $request->personality['question7'] === 'true' ? 1 : 0,
             "question8" => $request->personality['question8'] === 'true' ? 1 : 0,
             "question9" => $request->personality['question9'] === 'true' ? 1 : 0,
@@ -121,6 +129,15 @@ class UserController extends Controller
 
     public function profile(Request $request)
     {
+        $image = base64_decode($request->profile_image['base64String']); // image base64 encoded
+        $compPic =  '_image' . time() . '.' . $request->profile_image['format'];
+
+        Storage::disk('public')->put($compPic, $image);
+
+        $image = Image::make(public_path("storage/posts/{$compPic}"))->fit(1200, 1200);
+        $image->save();
+
+
         $fields = Validator::make($request->user, [
             'username' => ['required', 'string'],
             'bio' => ['required', 'string'],
@@ -144,7 +161,7 @@ class UserController extends Controller
         $user->username = $request->user['username'];
         $user->bio = $request->user['bio'];
         $user->contact = $request->user['contact'];
-        $user->profile = $request->user['profile'] || "";
+        $user->profile = $compPic || "";
         $user->password = Hash::make($password);
         $user->save();
 
