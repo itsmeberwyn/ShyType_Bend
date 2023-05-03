@@ -29,6 +29,7 @@ return new class extends Migration
             $table->boolean("ishidden");
             $table->timestamp("date_verified");
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

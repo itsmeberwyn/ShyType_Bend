@@ -54,7 +54,7 @@ class UserController extends Controller
             "gender" => $request->userBio['gender'],
             "matchgender" => $request->userBio['matchgender'],
             "profile" => '',
-            "ishidden" => 1,
+            "ishidden" => 0,
             "date_verified" => Carbon::now()->toDateTimeString(),
             'password' => Hash::make($request->password),
         ]);
@@ -154,4 +154,29 @@ class UserController extends Controller
             "status" => 200,
         ];
     }
+
+    public function user_hide_unhide_info(Request $request){
+        $fields = Validator::make($request->user, [
+            'ishidden' => ['required', 'string'],
+        ]);
+
+        if ($fields->fails()) {
+            return [
+                'error' => 'Bad credentials',
+                'status' => 401
+            ];
+        }
+        
+        $user = User::find($request->user['id']);
+        $user->ishidden = $request->user['ishidden'];
+        $user->save();
+
+        return [
+            "message" => "Successfully updated data",
+            "data" => $user,
+            "status" => 200,
+        ];
+    }
+
+
 }

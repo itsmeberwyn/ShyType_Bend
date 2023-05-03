@@ -73,4 +73,25 @@ class AdminController extends Controller
             "status" => 200
         ];
     }
+
+    public function admin_ban_user(Request $request){
+        $fields = Validator::make($request->all(), [
+            'userId' => ['required', 'string']
+        ]);
+
+        if ($fields->fails()) {
+            return [
+                'error' => 'Invalid data',
+                'status' => 401
+            ];
+        }
+
+        $user = User::find($request->user['id']);
+        $user->delete();
+    }
+
+    public function admin_get_users(Request $request){
+        $users = User::get();
+        return $users;
+    }
 }

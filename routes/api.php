@@ -33,6 +33,11 @@ Route::post('/user/message', [MessageController::class, 'send_message']);
 Route::get('/user/chats', [MessageController::class, 'get_chats']);
 Route::get('/user/convo', [MessageController::class, 'get_conversation']);
 
+Route::get('/user/visibility', [UserController::class, 'user_hide_unhide_info']);
+
+Route::get('/admin/ban', [AdminController::class, 'admin_ban_user']);
+Route::get('/admin/users', [AdminController::class, 'admin_get_users']);
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
