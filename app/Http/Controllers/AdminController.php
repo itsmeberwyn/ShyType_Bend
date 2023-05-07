@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -74,7 +75,8 @@ class AdminController extends Controller
         ];
     }
 
-    public function admin_ban_user(Request $request){
+    public function admin_ban_user(Request $request)
+    {
         $fields = Validator::make($request->all(), [
             'userId' => ['required', 'string']
         ]);
@@ -90,7 +92,8 @@ class AdminController extends Controller
         $user->delete();
     }
 
-    public function admin_get_users(Request $request){
+    public function admin_get_users(Request $request)
+    {
         $users = User::get();
         return $users;
     }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Model
 {
@@ -24,7 +25,8 @@ class User extends Model
         "date_verified",
     ];
 
-    public function Personality(){
+    public function Personality()
+    {
         return $this->hasOne(Personality::class);
     }
 }
