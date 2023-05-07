@@ -16,6 +16,7 @@ class User extends Model
         "lastname",
         "email",
         "bio",
+        "contact",
         "age",
         "gender",
         "matchgender",

@@ -16,14 +16,6 @@ class UserController extends Controller
 
     public function register(Request $request)
     {
-        $image = base64_decode($request->profile_image['base64String']); // image base64 encoded
-        $compPic =  '_image' . time() . '.' . $request->profile_image['format'];
-
-        Storage::disk('public')->put($compPic, $image);
-
-        $image = Image::make(public_path("storage/posts/{$compPic}"))->fit(1200, 1200);
-        $image->save();
-
         $fieldsuser = Validator::make($request->userBio, [
             'username' => ['required', 'string', 'unique:users'],
             'firstname' => ['required', 'string'],
@@ -61,9 +53,10 @@ class UserController extends Controller
             "email" => $request->userBio['email'],
             "age" => $request->userBio['age'],
             "bio" => '',
+            "contact" => "",
             "gender" => $request->userBio['gender'],
             "matchgender" => $request->userBio['matchgender'],
-            "profile" => $compPic,
+            "profile" => "",
             "ishidden" => 0,
             "date_verified" => Carbon::now()->toDateTimeString(),
             'password' => Hash::make($request->password),
