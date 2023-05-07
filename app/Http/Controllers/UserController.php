@@ -153,7 +153,7 @@ class UserController extends Controller
         $user->bio = $request->user['bio'] || "";
         $user->contact = $request->user['contact'] || "";
         $user->profile = $compPic !== '' ? $compPic : "";
-        $user->password = Hash::make($password);
+        $user->password = isset($request->user['npassword']) ? Hash::make($password) : $password;
         $user->save();
 
         return [
