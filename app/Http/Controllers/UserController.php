@@ -150,8 +150,8 @@ class UserController extends Controller
 
         $user = User::find($request->user['id']);
         $user->username = $request->user['username'];
-        $user->bio = $request->user['bio'] || "";
-        $user->contact = $request->user['contact'] || "";
+        $user->bio = $request->user['bio'] === "" ? "" : $request->user['bio'];
+        $user->contact = $request->user['contact'] === "" ? "" : $request->user['contact'];
         $user->profile = $compPic !== '' ? $compPic : "";
         $user->password = isset($request->user['npassword']) ? Hash::make($password) : $password;
         $user->save();
