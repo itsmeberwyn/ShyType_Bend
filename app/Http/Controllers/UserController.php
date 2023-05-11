@@ -59,7 +59,7 @@ class UserController extends Controller
             "profile" => "",
             "ishidden" => 0,
             "date_verified" => Carbon::now()->toDateTimeString(),
-            'password' => Hash::make($request->password),
+            'password' => Hash::make($request->userBio['password']),
         ]);
 
         $newUser = $user->save();
